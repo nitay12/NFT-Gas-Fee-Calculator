@@ -1,62 +1,75 @@
-//TODO: MOCK DATA - Dynamically fetch the data
-const user_nft_projects = [
-    {name: 'Cryptopunks',
-    data:[43934, 48656, 65165, 81827, 112143, 142383, 171533, 165174, 155157, 161454, 154610]},
-    {name: 'MutantApe',
-    data: [24916, 37941, 29742, 29851, 32490, 30282, 38121, 36885, 33726, 34243, 31050]}]
-document.addEventListener('DOMContentLoaded', function () {
-        const chart = Highcharts.chart('container', {
-    title: {
-        text: 'Best time to buy NFTs - Gas fees/Time(USD)',
-        align: 'left'
-    },
+var seriesData = [];
 
-    subtitle: {
-        text: 'Source: <a href="https://etherscan.io/" target="_blank">Etherscan</a>.',
-        align: 'left'
-    },
-
-    yAxis: {
+fetch("/average_gas_fees") // Adjust the route based on your Flask app
+  .then((response) => response.json())
+  .then((data) => {
+    for (var address in data) {
+      var addressData = data[address];
+      var addressSeries = {
+        name: address,
+        data: Object.values(addressData),
+      };
+      seriesData.push(addressSeries);
+      console.log(seriesData);
+      const chart = Highcharts.chart("container", {
         title: {
-            text: 'Price'
-        }
-    },
+          text: "Best time to buy NFTs - Gas fees/Time(USD)",
+          align: "left",
+        },
 
-    xAxis: {
-        type: 'datetime',
-    },
+        subtitle: {
+          text: 'Source: <a href="https://etherscan.io/" target="_blank">Etherscan</a>.',
+          align: "left",
+        },
 
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
-    },
+        yAxis: {
+          title: {
+            text: "Price",
+          },
+        },
 
-    plotOptions: {
-        series: {
+        xAxis: {
+          type: "datetime",
+          tickInterval: 1,
+          labels: {
+            format: "{value}:00", // Format hours
+          },
+        },
+
+        legend: {
+          layout: "vertical",
+          align: "right",
+          verticalAlign: "middle",
+        },
+
+        plotOptions: {
+          series: {
             label: {
-                connectorAllowed: false
+              connectorAllowed: false,
             },
-            pointStart: 00
-        }
-    },
+            pointStart: 0,
+          },
+        },
 
-    series: user_nft_projects,
+        series: seriesData,
 
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
+        responsive: {
+          rules: [
+            {
+              condition: {
+                maxWidth: 500,
+              },
+              chartOptions: {
                 legend: {
-                    layout: 'horizontal',
-                    align: 'center',
-                    verticalAlign: 'bottom'
-                }
-            }
-        }]
+                  layout: "horizontal",
+                  align: "center",
+                  verticalAlign: "bottom",
+                },
+              },
+            },
+          ],
+        },
+      });
+      document.getElementById("loading").style.display = "none";
     }
-
-});
-});
+  });

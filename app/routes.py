@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template
-from flask_login import login_required
+from flask import Blueprint, render_template, jsonify
+from flask_login import login_required, current_user
 
-from app.auth import auth_bp
+from app.utils import fetch_nft_transaction_data, calculate_avg_gas_fee_in_usd, fetch_eth_price_data
+from config import Config
 
 main_bp = Blueprint('main', __name__)
 
@@ -15,3 +16,19 @@ def index():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+
+@main_bp.route('/average_gas_fees')
+@login_required
+def get_average_gas_fees():
+    #TODO: Create an Addresses list for each user
+    addresses = [Config.MUTANTAPE_ADDRESS, Config.CRYPTOPUNKS_ADDRESS]
+    avg_gas_fees_data = {}
+
+    for address in addresses:
+        transactions = fetch_nft_transaction_data(address)
+        eth_price_data = fetch_eth_price_data(90)
+        avg_gas_fees_usd = calculate_avg_gas_fee_in_usd(transactions, eth_price_data)
+        avg_gas_fees_data[address] = avg_gas_fees_usd
+
+    return jsonify(avg_gas_fees_data)

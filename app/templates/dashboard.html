@@ -6,22 +6,20 @@
     <title>Dashboard</title>
     <script src="https://code.highcharts.com/10/highcharts.js"></script>
     <link rel="stylesheet" href="static/dashboard.css"/>
+    <script src="static/dashboard.js"></script>
 </head>
 <body>
-
-<script src="static/dashboard.js"></script>
-<h1>Welcome to the Dashboard</h1>
-<p>Hello, {{ current_user.id }}! You are logged in.</p>
+<h1>Dashboard</h1>
+<p>Hello, {{ current_user.id }}!</p>
 <figure class="highcharts-figure">
+    <div id="loading">
+        We Are Loading Your Data...
+      </div>
     <div id="container"></div>
-    <p class="highcharts-description">
-        Basic line chart showing trends in a dataset. This chart includes the
-        <code>series-label</code> module, which adds a label to each line for
-        enhanced readability.
-    </p>
 </figure>
 
 
 <a href="{{ url_for('auth.logout') }}">Logout</a>
+
 </body>
 </html>
