@@ -77,4 +77,4 @@ def fetch_eth_price_data(days_back):
 
     response = requests.get(Config.COINGECKO_URL, params=params)
     data = response.json()
-    return data['prices']
+    return data.get("prices", [])
